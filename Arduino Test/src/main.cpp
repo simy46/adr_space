@@ -1,22 +1,28 @@
 #include <Arduino.h>
 
-const int sensorPin = A0;  // Broche connectée à la sortie analogique du capteur
-int lastValue = -1;        // Dernière valeur lue (initialisée à une valeur impossible)
+// Définir les broches
+const int analogPin = A0;  // Sortie analogique
+const int digitalPin = 2;  // Sortie numérique
 
 void setup() {
-  Serial.begin(9600);      // Initialise la communication série
-  Serial.println("Démarrage du capteur d'humidité du sol...");
+  Serial.begin(9600);       // Initialiser la communication série
+  pinMode(digitalPin, INPUT); // Configurer D0 comme entrée
+  Serial.println("Détection sonore démarrée...");
 }
 
 void loop() {
-  int currentValue = analogRead(sensorPin); // Lire la valeur analogique du capteur (0 à 1023)
+  // Lire la valeur analogique (A0)
+  int soundLevel = analogRead(analogPin);
 
-  // Vérifier si la valeur a changé
-  if (currentValue != lastValue) {
-    lastValue = currentValue; // Mettre à jour la dernière valeur
-    Serial.print("Humidité du sol : ");
-    Serial.println(currentValue); // Afficher la nouvelle valeur dans le moniteur série
-  }
+  // Lire l'état numérique (D0)
+  int thresholdState = digitalRead(digitalPin);
 
-  delay(500); // Petite pause pour éviter un trop grand nombre de lectures
+  // Afficher les données
+  Serial.print("Niveau sonore (A0) : ");
+  Serial.print(soundLevel); // Affiche la valeur brute (0-1023)
+
+  Serial.print(" | Seuil atteint (D0) : ");
+  Serial.println(thresholdState == HIGH ? "OUI" : "NON");
+
+  delay(100); // Pause entre les lectures
 }
